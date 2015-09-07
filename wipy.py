@@ -71,7 +71,10 @@ class WipyRepository:
 
     def __init__(self, configFilePath):
         # Load defaults in the config.
-        config = {'www-root': '/var/www', 'wiki-root': '/var/wiki', 'template-directory': '/var/www/template','default-template': 'default.html'}
+        config = {'www-root': '/var/www',
+                  'wiki-root': '/var/wiki',
+                  'template-directory': '/var/www/template',
+                  'default-template': 'default.html'}
 
         try:
             f = open(configFilePath, 'r')
@@ -86,6 +89,21 @@ class WipyRepository:
         self.pages = WipyPagesIndex(self)
         self.dictionaries = WipyDictIndex(self)
 
+    def update(self, pageName, newText):
+        fullPath = pathlib.Path(
+            self.config['wiki-root']).joinpath(pageName + '.md')
+        print('Updating ' + str(fullPath) + '.')
+        try:
+            f = open(str(fullPath), 'w')
+        except IOError:
+            print('Could not open the file to be updated')
+            raise
+
+        f.write(newText)
+        f.truncate()
+        f.close()
+        print('Wrote it!')
+
 
 class WipyDocument:
     """ """
@@ -93,27 +111,27 @@ class WipyDocument:
     def __init__(self, filename):
 
         tail = pathlib.Path(filename).name
-        self.dictionary = {'template': DEFAULT_TEMPLATE,
-                           'filename': tail,
-                           'path': '/w/' + tail.split('.')[0]}
+        self._dictionary = {'template': DEFAULT_TEMPLATE, 'filename': tail, 'path': '/w/' + tail.split('.')[0]}
 
         try:
-            f = open(filename)
+            f = open(filename, 'r')
         except IOError:
             print('Wipy document "%s" not found', filename)
             raise
 
-        self.dictionary['raw'] = f.read()
-        file.seek(0)
+        self._dictionary['raw'] = f.read()
+        f.seek(0)
 
         frontMatterString = self.extractFrontMatter(f)
-        self.frontMatter = yaml.load(frontMatterString)
-        self.dictionary.update(frontMatter)
+        frontMatter = yaml.load(frontMatterString)
+
+        if frontMatter:
+            self._dictionary.update(frontMatter)
         
         mdPartOfDocument = f.read()
         f.close()
 
-        self.dictionary['content'] = self.parseMarkdown(mdPartOfDocument)
+        self._dictionary['content'] = self.parseMarkdown(mdPartOfDocument)
 
     def parseMarkdown(self, f):
         parser = CommonMark.DocParser()
@@ -137,7 +155,11 @@ class WipyDocument:
 
     @property
     def dictionary(self):
-        return self.dictionary
+        return self._dictionary
+
+    @dictionary.setter
+    def dictionary(self, rhs):
+        self._dictionary = rhs
 
     def render(self, templateDir):
         env = Environment(loader=FileSystemLoader(templateDir))

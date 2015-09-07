@@ -4,7 +4,8 @@
     <title></title>
     <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Lora">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.css') }}" type="text/css">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/default-template.css') }}" type="text/css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/editor.css') }}" type="text/css">
+<style type="text/css" media="screen"></style>
   </head>
   <body>
 <nav class="navbar navbar-default navbar-fixed-top" role="banner">
@@ -32,20 +33,40 @@
 </nav>
 
 <!--main-->
-<div class="container">
+<div class="container-fluid">
 	<div class="row">
       <!--left-->
-      <div class="col-md-3" id="leftCol">
-	<ul><li>Edit utils</li></ul>
+      <div class="col-md-2 col-sm-3 sidebar" id="leftCol">
+	<ul class="nav nav-sidebar">
+	  <li>Edit utils</li>
+	  <li>
+	    <form action="" method="POST">
+	      <input type="submit" name="Save" value="Save">
+	      <input id="hiddenInput" type="hidden" name="raw" value="{{raw}}">
+	    </form>
+	</ul>
       </div><!--/left-->
       
       <!--right-->
-      <div class="col-md-9"><div id="editor"></div></div><!--/right-->
+      <div id="editor" class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+	{{ raw }}
+      </div><!--/right-->
 </div><!--/row-->
 </div><!--/container-->
 
     <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/scrollspy.js') }}"></script>
+    <script src="{{ url_for('static', filename='ace/ace.js') }}"></script>
+    <script>
+      var editor = ace.edit("editor");
+      editor.setTheme("ace/theme/twilight");
+      editor.getSession().setMode("ace/mode/markdown");
+      editor.setFontSize(16)
+      editor.getSession().on('change', function(e) {
+      var hiddenField = document.getElementById("hiddenInput");
+      hiddenField.value = editor.getValue();
+      });
+      </script>
   </body>
 </html>

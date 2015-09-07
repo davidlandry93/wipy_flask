@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 
 import argparse
-import pathlib
 import mimetypes
-from flask import Flask, abort, redirect, render_template, g, Response
+from flask import Flask,  redirect, render_template, g,  request
 import wipy
 
 
@@ -39,10 +38,17 @@ def wiki_index():
 def wiki_page(page_name):
     return render_template('page.html', **g.repo.dictionaries[page_name])
 
-@app.route('/w/<path:page_name>/edit')
+@app.route('/w/<path:page_name>/edit', methods=['GET', 'POST'])
 def edit_wiki_page(page_name):
-    return render_template('edit.html', **g.repo.dictionaries[page_name])
-        
+    if request.method == 'GET':
+        return render_template('edit.html', **g.repo.dictionaries[page_name])
+    elif request.method == 'POST':
+        text = request.form['raw']
+        g.repo.update(page_name, text)
+
+        dictionary = g.repo.dictionaries[page_name]
+        dictionary.update(save_success=True)
+        return render_template('edit.html', **dictionary)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()

@@ -1,0 +1,17 @@
+
+html {
+    height: 100%;
+}
+
+body {
+    padding-top: 60px;
+}
+
+
+#editor { 
+    position: absolute;
+    top: 51px;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
