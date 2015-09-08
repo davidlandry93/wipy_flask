@@ -1,4 +1,1 @@
 wiki-root: /home/david/wiki
-www-root: /home/david/rep/wipy/example/www
-template-directory: /home/david/rep/wipy/example/template
-default-tempalte: default.html
