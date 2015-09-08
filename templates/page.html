@@ -31,18 +31,18 @@
   </div>
 </nav>
 
-<!--main-->
-<div class="container">
-	<div class="row">
-      <!--left-->
-      <div class="col-md-3" id="leftCol">
-	<div id="toc"></div>
-      </div><!--/left-->
-      
-      <!--right-->
-      <div class="col-md-9">{{content|safe}}</div><!--/right-->
-  	</div><!--/row-->
-</div><!--/container-->
+    <!--main-->
+    <div class="container">
+    <div class="row">
+	<!--left-->
+	<div class="col-md-3" id="leftCol">
+	    <div id="toc"></div>
+	</div><!--/left-->
+
+	<!--right-->
+	<div class="col-md-9">{{content|safe}}</div><!--/right-->
+    </div><!--/row-->
+    </div><!--/container-->
 
     <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/toc.js') }}"></script>
